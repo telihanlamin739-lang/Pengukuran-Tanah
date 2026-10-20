@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Pengukuran</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: auto;
+        background: white;
+        padding: 22px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px #00000012;
+    }
+
+    h1 {
+        text-align: center;
+        color: #166534;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .summary {
+        background: #dcfce7;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 18px 0;
+    }
+
+    button {
+        border: none;
+        padding: 10px 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+        background: #15803d;
+        font-size: 14px;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    .blue {
+        background: #2563eb;
+    }
+
+    .gray {
+        background: #64748b;
+    }
+
+    .red {
+        background: #dc2626;
+    }
+
+    .search {
+        margin: 15px 0;
+        max-width: 450px;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+    th, td {
+        border: 1px solid #d1d5db;
+        padding: 10px;
+        text-align: left;
+        font-size: 13px;
+    }
+
+    th {
+        background: #166534;
+        color: white;
+        text-align: center;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    td.center {
+        text-align: center;
+    }
+
+    .actions {
+        display: flex;
+        gap: 5px;
+    }
+
+    .actions button {
+        padding: 7px;
+        font-size: 12px;
+    }
+
+    .status {
+        color: #64748b;
+        font-size: 13px;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 700px) {
+        body {
+            padding: 8px;
+        }
+
+        .container {
+            padding: 12px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media print {
+        body {
+            background: white;
+            padding: 0;
+        }
+
+        .container {
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .no-print,
+        .actions,
+        th:last-child,
+        td:last-child {
+            display: none !important;
+        }
+
+        table {
+            min-width: 0;
+        }
+
+        th, td {
+            font-size: 9px;
+            padding: 5px;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>DATA PENGUKURAN TANAH</h1>
+    <p class="subtitle">Daftar Administrasi Pengukuran Tanah</p>
+
+    <div class="summary">
+        Jumlah Data: <span id="jumlah">0</span>
+    </div>
+
+    <section class="no-print">
+        <h3 id="judulForm">Tambah Data Pengukuran</h3>
+
+        <form id="formData">
+            <div class="form-grid">
+
+                <div>
+                    <label for="nama">Nama</label>
+                    <input id="nama" required placeholder="Nama pemilik tanah">
+                </div>
+
+                <div>
+                    <label for="luas">Luas Tanah</label>
+                    <input id="luas" required
+                           placeholder="Contoh: 2,5 Ha">
+                </div>
+
+                <div>
+                    <label for="lokasi">Lokasi</label>
+                    <input id="lokasi" required
+                           placeholder="Desa, kecamatan, lokasi">
+                </div>
+
+                <div>
+                    <label for="tanggal">Tanggal</label>
+                    <input id="tanggal" type="date" required>
+                </div>
+
+                <div>
+                    <label for="keperluan">Keperluan</label>
+                    <select id="keperluan" required>
+                        <option value="">Pilih keperluan</option>
+                        <option>Pengukuran</option>
+                        <option>Pengukuran ulang</option>
+                        <option>Pembuatan SKT</option>
+                        <option>Pemetaan</option>
+                        <option>Pengecekan lahan</option>
+                        <option>Lainnya</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="keterangan">Keterangan</label>
+                    <textarea id="keterangan" rows="1"
+                              placeholder="Catatan tambahan"></textarea>
+                </div>
+
+            </div>
+
+            <div class="buttons">
+                <button type="submit" id="tombolSimpan">
+                    + Simpan Data
+                </button>
+
+                <button type="button" class="gray"
+                        onclick="batalEdit()">
+                    Batal
+                </button>
+
+                <button type="button" class="blue"
+                        onclick="window.print()">
+                    Cetak Tabel
+                </button>
+
+                <button type="button" class="gray"
+                        onclick="eksporCSV()">
+                    Ekspor CSV
+                </button>
+            </div>
+        </form>
+
+        <label for="cari">Cari Data</label>
+        <input class="search" id="cari"
+               placeholder="Cari nama, lokasi, atau keperluan..."
+               oninput="tampilkanData()">
+    </section>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Luas Tanah</th>
+                    <th>Lokasi</th>
+                    <th>Tanggal</th>
+                    <th>Keperluan</th>
+                    <th>Keterangan</th>
+                    <th class="no-print">Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody id="isiTabel"></tbody>
+        </table>
+    </div>
+
+    <p class="status" id="status">
+        Data disimpan pada browser di perangkat ini.
+    </p>
+
+</div>
+
+<script>
+const KUNCI = "data_pengukuran_tanah_v1";
+
+let dataTanah = [];
+let indeksEdit = null;
+
+const form = document.getElementById("formData");
+
+function muatData() {
+    try {
+        dataTanah = JSON.parse(localStorage.getItem(KUNCI)) || [];
+        if (!Array.isArray(dataTanah)) dataTanah = [];
+    } catch {
+        dataTanah = [];
+    }
+}
+
+function simpanData() {
+    try {
+        localStorage.setItem(KUNCI, JSON.stringify(dataTanah));
+        document.getElementById("status").textContent =
+            "Data tersimpan di browser perangkat ini.";
+        return true;
+    } catch {
+        document.getElementById("status").textContent =
+            "Gagal menyimpan. Periksa ruang penyimpanan browser.";
+        return false;
+    }
+}
+
+function aman(teks) {
+    return String(teks ?? "").replace(/[&<>"']/g, karakter => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[karakter]);
+}
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const data = {
+        nama: document.getElementById("nama").value.trim(),
+        luas: document.getElementById("luas").value.trim(),
+        lokasi: document.getElementById("lokasi").value.trim(),
+        tanggal: document.getElementById("tanggal").value,
+        keperluan: document.getElementById("keperluan").value,
+        keterangan: document.getElementById("keterangan").value.trim()
+    };
+
+    if (!data.nama || !data.luas || !data.lokasi ||
+        !data.tanggal || !data.keperluan) {
+        alert("Lengkapi data yang wajib diisi.");
+        return;
+    }
+
+    if (indeksEdit === null) {
+        dataTanah.push(data);
+    } else {
+        dataTanah[indeksEdit] = data;
+    }
+
+    if (!simpanData()) {
+        alert("Penyimpanan gagal. Ekspor atau salin data sebelum menutup halaman.");
+        return;
+    }
+
+    batalEdit();
+    tampilkanData();
+});
+
+function tampilkanData() {
+    const kata = document.getElementById("cari").value
+        .trim().toLowerCase();
+
+    const hasil = dataTanah
+        .map((data, indeks) => ({data, indeks}))
+        .filter(item => Object.values(item.data)
+            .some(nilai => String(nilai)
+                .toLowerCase().includes(kata)));
+
+    const tabel = document.getElementById("isiTabel");
+    tabel.innerHTML = "";
+
+    hasil.forEach((item, nomor) => {
+        const d = item.data;
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td class="center">${nomor + 1}</td>
+            <td>${aman(d.nama)}</td>
+            <td>${aman(d.luas)}</td>
+            <td>${aman(d.lokasi)}</td>
+            <td>${aman(d.tanggal)}</td>
+            <td>${aman(d.keperluan)}</td>
+            <td>${aman(d.keterangan)}</td>
+            <td class="no-print">
+                <div class="actions">
+                    <button type="button" class="blue"
+                        onclick="editData(${item.indeks})">
+                        Edit
+                    </button>
+                    <button type="button" class="red"
+                        onclick="hapusData(${item.indeks})">
+                        Hapus
+                    </button>
+                </div>
+            </td>
+        `;
+
+        tabel.appendChild(tr);
+    });
+
+    document.getElementById("jumlah").textContent =
+        dataTanah.length;
+}
+
+function editData(indeks) {
+    const d = dataTanah[indeks];
+
+    document.getElementById("nama").value = d.nama;
+    document.getElementById("luas").value = d.luas;
+    document.getElementById("lokasi").value = d.lokasi;
+    document.getElementById("tanggal").value = d.tanggal;
+    document.getElementById("keperluan").value = d.keperluan;
+    document.getElementById("keterangan").value = d.keterangan;
+
+    indeksEdit = indeks;
+
+    document.getElementById("judulForm").textContent =
+        "Edit Data Pengukuran";
+
+    document.getElementById("tombolSimpan").textContent =
+        "Simpan Perubahan";
+
+    window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function batalEdit() {
+    indeksEdit = null;
+    form.reset();
+
+    document.getElementById("judulForm").textContent =
+        "Tambah Data Pengukuran";
+
+    document.getElementById("tombolSimpan").textContent =
+        "+ Simpan Data";
+}
+
+function hapusData(indeks) {
+    if (!confirm("Yakin ingin menghapus data ini?")) return;
+
+    const dataLama = dataTanah.slice();
+    dataTanah.splice(indeks, 1);
+
+    if (!simpanData()) {
+        dataTanah = dataLama;
+        return;
+    }
+
+    tampilkanData();
+}
+
+function eksporCSV() {
+    const kolom = [
+        ["No", "no"],
+        ["Nama", "nama"],
+        ["Luas Tanah", "luas"],
+        ["Lokasi", "lokasi"],
+        ["Tanggal", "tanggal"],
+        ["Keperluan", "keperluan"],
+        ["Keterangan", "keterangan"]
+    ];
+
+    const baris = [
+        kolom.map(k => k[0]),
+        ...dataTanah.map((d, i) => [
+            i + 1,
+            d.nama,
+            d.luas,
+            d.lokasi,
+            d.tanggal,
+            d.keperluan,
+            d.keterangan
+        ])
+    ];
+
+    const csv = "\uFEFF" + baris.map(row =>
+        row.map(nilai =>
+            '"' + String(nilai ?? "").replace(/"/g, '""') + '"'
+        ).join(";")
+    ).join("\r\n");
+
+    const blob = new Blob([csv], {
+        type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "Data_Pengukuran_Tanah.csv";
+    link.click();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+muatData();
+tampilkanData();
+
+document.getElementById("tanggal").value =
+    new Date().toLocaleDateString("en-CA");
+</script>
+
+</body>
+</html>
